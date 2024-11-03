@@ -1,20 +1,46 @@
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { NETFLIX_LOGO, USER_ICON } from "../utils/constants";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { addUser, removeUser } from "../redux/userSlice";
 
 const Header = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector(store => store.user);
 
     const handleSignOut = () => {
-        signOut(auth).then(() => {
-            navigate("/");
-        }).catch((error) => {
+        signOut(auth).then(() => {}
+        ).catch((error) => {
             navigate("/error");
         });
     }
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            // Sign In
+            if(user){
+                const {uid, email, displayName, photoURL} = user;
+                dispatch(addUser({
+                    uid:uid,
+                    email:email,
+                    displayName: displayName,
+                    photoURL: photoURL
+                }));
+                navigate("/browse");
+            }
+            // Sign Out
+            else{
+                dispatch(removeUser());
+                navigate("/");
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     return (
         <div className="w-screen absolute bg-gradient-to-b from-black px-8 py-2 z-10 flex justify-between">
             <img className="w-48 my-2" src={NETFLIX_LOGO} alt="logo"/>
