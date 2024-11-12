@@ -77,8 +77,7 @@ const Login = () => {
         <div>
             <Header/>
             <div className="absolute">
-                <img src={NETFLIX_LOGIN_BACKGROUND} alt="background"/>
-            
+                <img src={NETFLIX_LOGIN_BACKGROUND} alt="background"/>            
             </div>
             <form onSubmit={(e)=>{e.preventDefault()}}
              className="bg-opacity-80 bg-black w-3/12 p-12 my-40 absolute mx-auto left-0 right-0 text-white rounded-lg">
